@@ -183,24 +183,27 @@ while database_num < 5 and bool_to_main_while == True: #bool_to_main_while == Tr
         #
         max_id = rows[0][0] + 1
         ####
-        if datetime_now.day >= 1 and datetime_now.day < 16:
-            datetime_now = datetime_now + relativedelta(days=(-datetime_now.day))
-            ##
-            if datetime_now.month < 10:
-                datetime_now_month = '0'+str(datetime_now.month)
-            else:
-                datetime_now_month = str(datetime_now.month)
-            ##
-            date1 = str(datetime_now.year)+'-'+datetime_now_month+'-16'
-            date2 = datetime_now.strftime('%Y-%m-%d')
-        else:
-            if datetime_now.month < 10:
-                datetime_now_month = '0'+str(datetime_now.month)
-            else:
-                datetime_now_month = str(datetime_now.month)
-            ##
-            date1 = str(datetime_now.year)+'-'+datetime_now_month+'-01'
-            date2 = str(datetime_now.year)+'-'+datetime_now_month+'-15'
+        datetime_now = datetime_now + relativedelta(days=(-1))
+        date1 = datetime_now.strftime('%Y-%m-%d')
+        date2 = datetime_now.strftime('%Y-%m-%d')
+        #if datetime_now.day >= 1 and datetime_now.day < 16:
+            #datetime_now = datetime_now + relativedelta(days=(-datetime_now.day))
+            ###
+            #if datetime_now.month < 10:
+                #datetime_now_month = '0'+str(datetime_now.month)
+            #else:
+                #datetime_now_month = str(datetime_now.month)
+            ###
+            #date1 = str(datetime_now.year)+'-'+datetime_now_month+'-16'
+            #date2 = datetime_now.strftime('%Y-%m-%d')
+        #else:
+            #if datetime_now.month < 10:
+                #datetime_now_month = '0'+str(datetime_now.month)
+            #else:
+                #datetime_now_month = str(datetime_now.month)
+            ###
+            #date1 = str(datetime_now.year)+'-'+datetime_now_month+'-01'
+            #date2 = str(datetime_now.year)+'-'+datetime_now_month+'-15'
         ####
         date1_datetime = datetime.strptime(date1, '%Y-%m-%d')
         date2_datetime = datetime.strptime(date2, '%Y-%m-%d')
@@ -230,7 +233,7 @@ while database_num < 5 and bool_to_main_while == True: #bool_to_main_while == Tr
                             "AccessUserPersons.ID "
                             "FROM AccessUserPersons "
                             "WHERE "
-                            "AccessUserPersons.id = "+str(while_for_import)) 
+                            "AccessUserPersons.id = "+str(while_for_import))
                 rows = cursor_to_viso.fetchall()
                 user_external_id = copy.copy(rows[0][0])
             except:
@@ -239,7 +242,7 @@ while database_num < 5 and bool_to_main_while == True: #bool_to_main_while == Tr
                 console.print(Panel(traceback.format_exc()), style=rich_error)
                 logging.error('get external id error')
                 logging.exception('except')
-                return False 
+                return False
             #end step 1#
             ############
 
@@ -253,10 +256,10 @@ while database_num < 5 and bool_to_main_while == True: #bool_to_main_while == Tr
             if errors == False:
                 if test_mode == False:
                     try:
-                        cursor_to_enova.execute("""SELECT 
-                            KartyRCP.Pracownik  
-                            FROM KartyRCP 
-                            WHERE 
+                        cursor_to_enova.execute("""SELECT
+                            KartyRCP.Pracownik
+                            FROM KartyRCP
+                            WHERE
                             KartyRCP.Numer = '"""+user_external_id+"'")
                         rows = cursor_to_enova.fetchall()
                         ##
@@ -282,7 +285,7 @@ while database_num < 5 and bool_to_main_while == True: #bool_to_main_while == Tr
             #################
             #get log entries#
             #################
-            if errors == False: 
+            if errors == False:
                 try:
                     cursor_to_viso.execute("SELECT EventLogEntries.LoggedOn, "
                             "EventLogEntries.ControllerID "
@@ -296,7 +299,7 @@ while database_num < 5 and bool_to_main_while == True: #bool_to_main_while == Tr
                     errors = True
                     logging.error('get logs entries')
                     logging.exception('except')
-                    return False 
+                    return False
             #end step 2#
             ############
 
@@ -368,15 +371,15 @@ while database_num < 5 and bool_to_main_while == True: #bool_to_main_while == Tr
                     try:
                         buff_tuple = tuple(finish_rows)
                        #enova_columns: str = "Pracownik, Data, Godzina, Typ, Operacja, Zaimportowany, Stan, CzytnikRCP, Stamp, Zmodyfikowany"
-                        cursor_to_enova.executemany("""INSERT INTO """+table_name_for_insert+""" 
-                            (Pracownik, Data, Godzina, Typ, Operacja, Zaimportowany, Stan, CzytnikRCP, Zmodyfikowany)  
+                        cursor_to_enova.executemany("""INSERT INTO """+table_name_for_insert+"""
+                            (Pracownik, Data, Godzina, Typ, Operacja, Zaimportowany, Stan, CzytnikRCP, Zmodyfikowany)
                             VALUES (%s, %d, %d, %d, %d, %d, %d, %d, %d)""", buff_tuple)
                         connection_to_enova.commit()
                         #duplicate#
                         if test_mode == False:
                             buff_tuple = tuple(finish_rows_duplicate)
-                            cursor_to_enova.executemany("""INSERT INTO """+table_name_duplicate_for_insert+""" 
-                                (Pracownik, Data, Godzina, Typ, Operacja, CzytnikRCP) 
+                            cursor_to_enova.executemany("""INSERT INTO """+table_name_duplicate_for_insert+"""
+                                (Pracownik, Data, Godzina, Typ, Operacja, CzytnikRCP)
                                 VALUES (%s, %d, %d, %d, %d, %d)""", buff_tuple)
                             connection_to_enova.commit()
                         ##
@@ -413,24 +416,27 @@ while database_num < 5 and bool_to_main_while == True: #bool_to_main_while == Tr
         ##
         datetime_now = datetime.now()
         ##
-        if datetime_now.day >= 1 and datetime_now.day < 16:
-            datetime_now = datetime_now + relativedelta(days=(-datetime_now.day))
-            ##
-            if datetime_now.month < 10:
-                datetime_now_month = '0'+str(datetime_now.month)
-            else:
-                datetime_now_month = str(datetime_now.month)
-            ##
-            date1 = str(datetime_now.year)+'-'+datetime_now_month+'-16'
-            date2 = datetime_now.strftime('%Y-%m-%d')
-        else:
-            if datetime_now.month < 10:
-                datetime_now_month = '0'+str(datetime_now.month)
-            else:
-                datetime_now_month = str(datetime_now.month)
-            ##
-            date1 = str(datetime_now.year)+'-'+datetime_now_month+'-01'
-            date2 = str(datetime_now.year)+'-'+datetime_now_month+'-15'
+        datetime_now = datetime_now + relativedelta(days=(-1))
+        date1 = datetime_now.strftime('%Y-%m-%d')
+        date2 = datetime_now.strftime('%Y-%m-%d')
+        #if datetime_now.day >= 1 and datetime_now.day < 16:
+            #datetime_now = datetime_now + relativedelta(days=(-datetime_now.day))
+            ###
+            #if datetime_now.month < 10:
+                #datetime_now_month = '0'+str(datetime_now.month)
+            #else:
+                #datetime_now_month = str(datetime_now.month)
+            ###
+            #date1 = str(datetime_now.year)+'-'+datetime_now_month+'-16'
+            #date2 = datetime_now.strftime('%Y-%m-%d')
+        #else:
+            #if datetime_now.month < 10:
+                #datetime_now_month = '0'+str(datetime_now.month)
+            #else:
+                #datetime_now_month = str(datetime_now.month)
+            ###
+            #date1 = str(datetime_now.year)+'-'+datetime_now_month+'-01'
+            #date2 = str(datetime_now.year)+'-'+datetime_now_month+'-15'
         ####
         #check datetime#
         date1_datetime = datetime.strptime(date1, '%Y-%m-%d')
@@ -561,7 +567,7 @@ while database_num < 5 and bool_to_main_while == True: #bool_to_main_while == Tr
         #step 2.2#
 
         ######################
-        #delete dow if no RCP#
+        #delete row if no RCP#
         ######################
 
         i_in_while = 0
